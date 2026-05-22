@@ -361,6 +361,71 @@ canvas { position:absolute; inset:0; display:block; }
 .fi1{animation-delay:.06s} .fi2{animation-delay:.16s}
 .fi3{animation-delay:.28s} .fi4{animation-delay:.42s}
 .fi5{animation-delay:.56s}
+@media (max-width: 768px){
+
+  body{
+    overflow:auto;
+  }
+
+  .view{
+    flex-direction:column;
+    padding:110px 24px 60px;
+    gap:40px;
+    height:auto;
+    min-height:100vh;
+  }
+
+  .left{
+    width:100%;
+    max-width:100%;
+    padding-right:0;
+  }
+
+  .left h1{
+    font-size:64px;
+    line-height:.9;
+  }
+
+  .left p{
+    font-size:18px;
+    line-height:1.7;
+    max-width:100%;
+  }
+
+  .orbit-wrap{
+    width:100%;
+    height:55vh;
+    min-height:420px;
+  }
+
+  .panel{
+    width:100%;
+    right:-100%;
+  }
+
+  .panel.open{
+    right:0;
+  }
+
+  nav{
+    padding:20px 24px;
+  }
+
+  .n-right{
+    gap:18px;
+    font-size:11px;
+  }
+
+  .ep-title{
+    font-size:42px;
+  }
+
+  .ep-text{
+    font-size:17px;
+    line-height:1.8;
+  }
+
+}
 </style>
 </head>
 <body>
