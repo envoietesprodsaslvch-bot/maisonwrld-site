@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>MAISONWRLD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;1,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --void: #000002;
+  --white: #f2f0eb;
+  --gold: #c8a84b;
+  --fd: 'Bebas Neue', sans-serif;
+  --fs: 'Cormorant Garamond', serif;
+  --fm: 'DM Mono', monospace;
+}
+
+html, body {
+  width:100%; height:100%;
+  overflow:hidden;
+  background:var(--void);
+  color:var(--white);
+  font-family:var(--fs);
+  cursor:none;
+}
+
+/* CURSOR */
+#cur, #cur-ring {
+  position:fixed; border-radius:50%;
+  pointer-events:none; z-index:9999;
+  transform:translate(-50%,-50%);
+}
+#cur {
+  width:5px; height:5px;
+  background:var(--white);
+  transition:width .15s,height .15s,background .15s;
+}
+#cur-ring {
+  width:26px; height:26px;
+  border:1px solid rgba(242,240,235,.18);
+  transition:width .12s,height .12s,border-color .15s;
+}
+
+/* VIEWS */
+.view {
+  position:fixed; inset:0;
+  visibility:hidden; opacity:0;
+  transition:opacity .5s ease,visibility .5s;
+}
+.view.show { visibility:visible; opacity:1; }
+
+/* FLASH TRANSITION */
+#flash {
+  position:fixed; inset:0; z-index:800;
+  background:var(--void);
+  opacity:0; pointer-events:none;
+  transition:opacity .22s ease;
+}
+
+/* UNIVERSE TINT */
+#tint {
+  position:fixed; inset:0; z-index:5;
+  pointer-events:none; opacity:0;
+  transition:opacity .9s ease;
+}
+
+/* NAV */
+nav {
+  position:fixed; top:0; left:0; right:0;
+  z-index:600;
+  display:flex; justify-content:space-between; align-items:center;
+  padding:26px 52px;
+  pointer-events:none;
+}
+nav * { pointer-events:auto; }
+.n-logo {
+  font-family:var(--fm); font-size:10px;
+  letter-spacing:6px; color:rgba(242,240,235,.44);
+  text-transform:uppercase; cursor:none;
+  transition:color .3s;
+}
+.n-logo:hover { color:var(--white); }
+.n-right { display:flex; gap:32px; align-items:center; }
+.n-btn {
+  font-family:var(--fm); font-size:9px;
+  letter-spacing:3px; color:rgba(242,240,235,.25);
+  text-decoration:none; text-transform:uppercase;
+  cursor:none; transition:color .3s;
+}
+.n-btn:hover { color:var(--white); }
+.n-back::before { content:'← '; }
+
+/* CANVAS */
+canvas { position:absolute; inset:0; display:block; }
+
+/* HOME TEXT */
+#home-text {
+  position:fixed; left:52px; top:50%;
+  transform:translateY(-50%);
+  z-index:100; max-width:360px;
+  pointer-events:none;
+  opacity:0; animation:fadeUp .9s ease forwards .4s;
+}
+#home-text .ht-tag {
+  font-family:var(--fm); font-size:8px;
+  letter-spacing:5px; color:rgba(242,240,235,.26);
+  text-transform:uppercase; margin-bottom:24px;
+  display:flex; align-items:center; gap:14px;
+}
+#home-text .ht-tag::before {
+  content:''; display:block;
+  width:28px; height:1px;
+  background:rgba(242,240,235,.16);
+}
+#home-text h1 {
+  font-family:var(--fd);
+  font-size:clamp(34px,4.2vw,64px);
+  line-height:.9; letter-spacing:3px;
+  color:var(--white); margin-bottom:16px;
+}
+#home-text .ht-sub {
+  font-family:var(--fs); font-style:italic;
+  font-size:clamp(14px,1.5vw,18px);
+  color:rgba(242,240,235,.38);
+  line-height:1.7; margin-bottom:20px;
+}
+#home-text .ht-structs {
+  font-family:var(--fm); font-size:8px;
+  letter-spacing:3px; color:rgba(242,240,235,.18);
+  text-transform:uppercase; line-height:2;
+}
+
+/* UNIVERSE BADGE — large bg text */
+#universe-badge {
+  position:fixed; inset:0; z-index:6;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  pointer-events:none;
+  opacity:0; transition:opacity .7s ease;
+}
+#universe-badge.show { opacity:1; }
+#universe-badge .ub-name {
+  font-family:var(--fd);
+  font-size:clamp(52px,9vw,130px);
+  letter-spacing:8px; line-height:1;
+  color:rgba(242,240,235,.04);
+}
+#universe-badge .ub-sub {
+  font-family:var(--fm); font-size:8px;
+  letter-spacing:6px; color:rgba(242,240,235,.08);
+  text-transform:uppercase; margin-top:10px;
+}
+
+/* TOOLTIP */
+#tip {
+  position:fixed; z-index:700;
+  background:rgba(0,0,2,.94);
+  border:1px solid rgba(242,240,235,.07);
+  padding:14px 20px; pointer-events:none;
+  opacity:0; transition:opacity .18s;
+  max-width:230px;
+}
+#tip .t-name {
+  font-family:var(--fd); font-size:20px;
+  letter-spacing:4px; display:block;
+}
+#tip .t-sub {
+  font-family:var(--fm); font-size:7px;
+  letter-spacing:2px; color:rgba(242,240,235,.35);
+  text-transform:uppercase; display:block;
+  margin-top:5px; line-height:1.8;
+}
+#tip .t-hint {
+  font-family:var(--fm); font-size:7px;
+  letter-spacing:3px; color:rgba(200,168,75,.7);
+  text-transform:uppercase; display:block;
+  margin-top:9px;
+}
+
+/* ENTITY LEFT PANEL */
+.ent-panel {
+  position:fixed; left:0; top:0; bottom:0;
+  width:min(420px,40%); z-index:100;
+  display:flex; flex-direction:column;
+  justify-content:center;
+  padding:90px 48px 48px;
+  pointer-events:none;
+}
+.ent-panel * { pointer-events:auto; }
+.ep-num {
+  font-family:var(--fm); font-size:8px;
+  letter-spacing:5px; color:rgba(242,240,235,.2);
+  text-transform:uppercase; margin-bottom:22px;
+  display:flex; align-items:center; gap:13px;
+}
+.ep-num::before {
+  content:''; display:block;
+  width:26px; height:1px;
+  background:rgba(242,240,235,.14);
+}
+.ep-name {
+  font-family:var(--fd);
+  font-size:clamp(52px,7.5vw,108px);
+  line-height:.85; letter-spacing:2px;
+  margin-bottom:18px; white-space:pre-line;
+}
+.ep-tagline {
+  font-family:var(--fs); font-style:italic;
+  font-size:clamp(14px,1.5vw,18px);
+  color:rgba(242,240,235,.44);
+  line-height:1.65; margin-bottom:22px;
+}
+.ep-body {
+  font-size:13px; line-height:1.9;
+  color:rgba(242,240,235,.35);
+  font-weight:300; margin-bottom:32px;
+  max-width:330px;
+}
+.ep-hint {
+  font-family:var(--fm); font-size:7px;
+  letter-spacing:4px; color:rgba(242,240,235,.16);
+  text-transform:uppercase; margin-bottom:26px;
+}
+.ep-cta {
+  display:inline-block;
+  font-family:var(--fm); font-size:9px;
+  letter-spacing:4px; color:var(--void);
+  background:var(--gold); padding:12px 28px;
+  text-decoration:none; text-transform:uppercase;
+  transition:background .3s; cursor:none;
+}
+.ep-cta:hover { background:#dbbf60; }
+
+/* RIGHT PANEL — satellite content */
+#side-panel {
+  position:fixed; right:0; top:0; bottom:0;
+  width:min(440px,42%); z-index:600;
+  background:rgba(0,0,2,.97);
+  border-left:1px solid rgba(242,240,235,.05);
+  transform:translateX(100%);
+  transition:transform .55s cubic-bezier(.16,1,.3,1);
+  display:flex; flex-direction:column;
+  overflow:hidden;
+}
+#side-panel.open { transform:translateX(0); }
+#side-panel::before {
+  content:''; display:block;
+  height:2px; width:0%;
+  background:var(--panel-accent, var(--gold));
+  transition:width .7s ease .15s;
+  position:absolute; top:0; left:0; right:0;
+}
+#side-panel.open::before { width:100%; }
+#sp-close-row {
+  padding:22px 44px 0;
+  display:flex; justify-content:flex-end;
+  flex-shrink:0;
+}
+#sp-close {
+  font-family:var(--fm); font-size:8px;
+  letter-spacing:4px; color:rgba(242,240,235,.25);
+  cursor:none; text-transform:uppercase;
+  transition:color .3s; padding:6px 0;
+}
+#sp-close:hover { color:var(--white); }
+#sp-close::before { content:'✕  '; }
+#sp-body {
+  flex:1; overflow-y:auto;
+  padding:32px 44px 52px;
+}
+.sp-label {
+  font-family:var(--fm); font-size:7px;
+  letter-spacing:5px; text-transform:uppercase;
+  margin-bottom:20px; opacity:.45;
+  display:flex; align-items:center; gap:12px;
+}
+.sp-label::before {
+  content:''; display:block;
+  width:22px; height:1px;
+  background:currentColor; opacity:.4;
+}
+.sp-title {
+  font-family:var(--fd);
+  font-size:clamp(44px,5vw,72px);
+  letter-spacing:2px; line-height:.88;
+  margin-bottom:20px;
+}
+.sp-desc {
+  font-family:var(--fs); font-size:17px;
+  line-height:1.95; color:rgba(242,240,235,.44);
+  font-weight:300; margin-bottom:36px;
+}
+.sp-items { display:flex; flex-direction:column; gap:1px; margin-bottom:36px; }
+.sp-item {
+  background:rgba(242,240,235,.025);
+  padding:18px 16px;
+  border-left:2px solid transparent;
+  transition:background .25s,border-color .25s;
+  cursor:default;
+}
+.sp-item:hover {
+  background:rgba(242,240,235,.048);
+}
+.sp-item-tag {
+  font-family:var(--fm); font-size:7px;
+  letter-spacing:3px; text-transform:uppercase;
+  display:block; margin-bottom:6px; opacity:.5;
+}
+.sp-item-name {
+  font-family:var(--fd); font-size:20px;
+  letter-spacing:3px; color:rgba(242,240,235,.8);
+  display:block; margin-bottom:4px;
+}
+.sp-item-sub {
+  font-family:var(--fm); font-size:7px;
+  letter-spacing:1.5px; color:rgba(242,240,235,.22);
+  text-transform:uppercase;
+}
+.sp-cta {
+  display:inline-block; font-family:var(--fm);
+  font-size:9px; letter-spacing:4px;
+  color:var(--void); padding:12px 28px;
+  text-decoration:none; text-transform:uppercase;
+  transition:opacity .3s; cursor:none;
+  opacity:.9;
+}
+.sp-cta:hover { opacity:1; }
+
+/* HINT */
+#hint {
+  position:fixed; bottom:38px; left:50%;
+  transform:translateX(-50%); z-index:100;
+  text-align:center; pointer-events:none;
+  transition:opacity 1.2s;
+}
+#hint p {
+  font-family:var(--fm); font-size:7px;
+  letter-spacing:5px; color:rgba(242,240,235,.16);
+  text-transform:uppercase; line-height:2.2;
+}
+#hint .dot {
+  display:inline-block; width:4px; height:4px;
+  border-radius:50%; background:rgba(242,240,235,.12);
+  margin-top:10px;
+  animation:pulse 2.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100%{transform:scale(1);opacity:.2}
+  50%{transform:scale(1.9);opacity:.7}
+}
+
+/* ANIMS */
+@keyframes fadeUp {
+  from{opacity:0;transform:translateY(18px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.fi { animation:fadeUp .65s ease both; }
+.fi1{animation-delay:.06s} .fi2{animation-delay:.16s}
+.fi3{animation-delay:.28s} .fi4{animation-delay:.42s}
+.fi5{animation-delay:.56s}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-ring"></div>
+<div id="flash"></div>
+<div id="tint"></div>
+
+<!-- UNIVERSE BADGE -->
+<div id="universe-badge">
+  <span class="ub-name" id="ub-name"></span>
+  <span class="ub-sub"  id="ub-sub"></span>
+</div>
+
+<!-- TOOLTIP -->
+<div id="tip">
+  <span class="t-name" id="t-name"></span>
+  <span class="t-sub"  id="t-sub"></span>
+  <span class="t-hint" id="t-hint">Cliquer pour entrer →</span>
+</div>
+
+<!-- NAV -->
+<nav>
+  <span class="n-logo" id="nav-logo">MAISONWRLD</span>
+  <div class="n-right">
+    <a href="mailto:contact@maisonwrld.com" class="n-btn">Contact</a>
+    <span class="n-btn n-back" id="nav-back" style="display:none">Retour</span>
+  </div>
+</nav>
+
+<!-- SIDE PANEL (satellite content) -->
+<div id="side-panel">
+  <div id="sp-close-row"><span id="sp-close">Fermer</span></div>
+  <div id="sp-body"></div>
+</div>
+
+<!-- HINT -->
+<div id="hint">
+  <p>SURVOLER · CLIQUER · EXPLORER</p>
+  <div class="dot"></div>
+</div>
+
+<!-- HOME -->
+<div class="view show" id="view-home">
+  <canvas id="c-home"></canvas>
+  <div id="home-text">
+    <div class="ht-tag">Holding Créative · Rouen · Est. 2020</div>
+    <h1>DE LA<br>CRÉATION<br>À L'HÉRITAGE.</h1>
+    <div class="ht-sub">L'univers ne s'est pas<br>construit par hasard.<br>Nous non plus.</div>
+    <div class="ht-structs">RECMACHINE · OANA · ASTRAMORA</div>
+  </div>
+</div>
+
+<!-- RECMACHINE -->
+<div class="view" id="view-rec">
+  <canvas id="c-rec"></canvas>
+  <div class="ent-panel" id="panel-rec"></div>
+</div>
+
+<!-- OANA -->
+<div class="view" id="view-oana">
+  <canvas id="c-oana"></canvas>
+  <div class="ent-panel" id="panel-oana"></div>
+</div>
+
+<!-- ASTRAMORA -->
+<div class="view" id="view-astrvm">
+  <canvas id="c-astrvm"></canvas>
+  <div class="ent-panel" id="panel-astrvm"></div>
+</div>
+
+<script>
+'use strict';
+
+/* ═══════════════════ UTILS ═══════════════════ */
+const TAU  = Math.PI * 2;
+const rand = (a,b) => Math.random()*(b-a)+a;
+const lerp = (a,b,t) => a+(b-a)*t;
+const clamp= (v,a,b) => Math.max(a,Math.min(b,v));
+
+/* ═══════════════════ CURSOR ═══════════════════ */
+const curEl   = document.getElementById('cur');
+const curRing = document.getElementById('cur-ring');
+let mx=0, my=0, rx=0, ry=0;
+
+document.addEventListener('mousemove', e => {
+  mx=e.clientX; my=e.clientY;
+  curEl.style.left=mx+'px'; curEl.style.top=my+'px';
+});
+(function cl(){
+  rx=lerp(rx,mx,.13); ry=lerp(ry,my,.13);
+  curRing.style.left=rx+'px'; curRing.style.top=ry+'px';
+  requestAnimationFrame(cl);
+})();
+
+function setCur(on, color) {
+  curEl.style.width = curEl.style.height = on ? '12px' : '5px';
+  curEl.style.background = on ? (color||'#c8a84b') : 'var(--white)';
+  curRing.style.width = curRing.style.height = on ? '44px' : '26px';
+  curRing.style.borderColor = on
+    ? (color ? color.replace('rgb','rgba').replace(')',', .5)') : 'rgba(200,168,75,.5)')
+    : 'rgba(242,240,235,.18)';
+}
+
+/* ═══════════════════ NAV & FLASH ═══════════════════ */
+const flashEl  = document.getElementById('flash');
+const tintEl   = document.getElementById('tint');
+const navBack  = document.getElementById('nav-back');
+const ubBadge  = document.getElementById('universe-badge');
+const ubName   = document.getElementById('ub-name');
+const ubSub    = document.getElementById('ub-sub');
+const hintEl   = document.getElementById('hint');
+let   currentView = 'home';
+let   hintDone = false;
+
+function dismissHint() {
+  if(hintDone) return;
+  hintDone=true;
+  hintEl.style.opacity='0';
+}
+
+function flash(cb) {
+  flashEl.style.transition='opacity .22s ease';
+  flashEl.style.opacity='1';
+  setTimeout(()=>{
+    cb();
+    flashEl.style.transition='opacity .42s ease';
+    flashEl.style.opacity='0';
+  },230);
+}
+
+function showView(id, entityColor) {
+  flash(()=>{
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('show'));
+    document.getElementById('view-'+id).classList.add('show');
+    currentView=id;
+    navBack.style.display=(id==='home')?'none':'inline';
+    hideTip();
+    closeSidePanel();
+    setCur(false);
+    dismissHint();
+
+    if(id==='home'){
+      ubBadge.classList.remove('show');
+      tintEl.style.opacity='0';
+      tintEl.style.background='transparent';
+    } else {
+      const cfg=CONFIGS[id];
+      if(cfg){
+        ubName.textContent=cfg.coreName;
+        ubSub.textContent=cfg.num;
+        ubBadge.classList.add('show');
+        tintEl.style.background=`radial-gradient(ellipse at 65% 50%, ${cfg.tint} 0%, transparent 65%)`;
+        tintEl.style.opacity='1';
+        initEntityView(id);
+      }
+    }
+  });
+}
+
+document.getElementById('nav-logo').addEventListener('click', ()=>showView('home'));
+navBack.addEventListener('click', ()=>showView('home'));
+
+/* ═══════════════════ TOOLTIP ═══════════════════ */
+const tipEl   = document.getElementById('tip');
+const tipName = document.getElementById('t-name');
+const tipSub  = document.getElementById('t-sub');
+const tipHint = document.getElementById('t-hint');
+
+function showTip(x, y, name, sub, hint, color) {
+  tipName.textContent=name;
+  tipName.style.color=color||'var(--white)';
+  tipSub.textContent=sub||'';
+  tipHint.textContent=hint||'Cliquer pour entrer →';
+  tipEl.style.opacity='1';
+  const W=window.innerWidth, H=window.innerHeight;
+  const lx=(x+24+230>W)?x-250:x+24;
+  const ly=clamp(y-20, 8, H-110);
+  tipEl.style.left=lx+'px'; tipEl.style.top=ly+'px';
+}
+function hideTip(){ tipEl.style.opacity='0'; }
+
+/* ═══════════════════ SIDE PANEL ═══════════════════ */
+const sidePanel = document.getElementById('side-panel');
+const spBody    = document.getElementById('sp-body');
+document.getElementById('sp-close').addEventListener('click', closeSidePanel);
+
+function closeSidePanel(){ sidePanel.classList.remove('open'); }
+
+function openSidePanel(sat) {
+  const c=sat.content||{};
+  const color=sat.panelColor||'var(--gold)';
+  sidePanel.style.setProperty('--panel-accent', color);
+
+  spBody.innerHTML=`
+    <div class="sp-label fi" style="color:${color}">${c.label||sat.label}</div>
+    <div class="sp-title fi fi1" style="color:${color}">${c.title||sat.label}</div>
+    <div class="sp-desc fi fi2">${c.desc||''}</div>
+    <div class="sp-items fi fi3">
+      ${(c.items||[]).map(it=>`
+        <div class="sp-item" style="--acc:${color}">
+          <span class="sp-item-tag" style="color:${color}">${it.tag}</span>
+          <span class="sp-item-name">${it.name}</span>
+          <span class="sp-item-sub">${it.sub}</span>
+        </div>`).join('')}
+    </div>
+    <a href="mailto:contact@maisonwrld.com" class="sp-cta fi fi4"
+       style="background:${color}">${c.cta||'Nous contacter'}</a>
+  `;
+
+  // hover items border
+  setTimeout(()=>{
+    spBody.querySelectorAll('.sp-item').forEach(el=>{
+      el.addEventListener('mouseenter',()=>{ el.style.borderLeftColor=color; });
+      el.addEventListener('mouseleave',()=>{ el.style.borderLeftColor='transparent'; });
+    });
+  },50);
+
+  sidePanel.classList.add('open');
+}
+
+/* ═══════════════════ STARS ═══════════════════ */
+function createStars(W, H) {
+  const n=Math.floor(W*H/2500);
+  const arr=[];
+  for(let i=0;i<n;i++) arr.push({
+    x:rand(0,W), y:rand(0,H),
+    r:rand(.04,.7), a:rand(.04,.32),
+    sp:rand(.003,.015), ph:rand(0,TAU)
+  });
+  return arr;
+}
+function drawStars(ctx, stars, t) {
+  for(const s of stars){
+    const tw=Math.sin(t*s.sp+s.ph)*.32+.68;
+    ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,TAU);
+    ctx.fillStyle=`rgba(242,240,235,${s.a*tw})`; ctx.fill();
+  }
+}
+
+/* ═══════════════════ GLOW CIRCLE ═══════════════════ */
+function drawGlow(ctx, x, y, r, rgba, hov) {
+  const ga=hov?.5:.22;
+  // glow
+  const og=ctx.createRadialGradient(x,y,r*.4,x,y,r*3.5);
+  og.addColorStop(0, rgba.replace('A',(ga*.9).toFixed(2)));
+  og.addColorStop(1,'transparent');
+  ctx.beginPath(); ctx.arc(x,y,r*3.5,0,TAU);
+  ctx.fillStyle=og; ctx.fill();
+  // body
+  const bg=ctx.createRadialGradient(x-r*.28,y-r*.28,0,x,y,r);
+  bg.addColorStop(0, rgba.replace('A','1'));
+  bg.addColorStop(.68, rgba.replace('A','.8'));
+  bg.addColorStop(1, rgba.replace('A','.1'));
+  ctx.beginPath(); ctx.arc(x,y,r,0,TAU);
+  ctx.fillStyle=bg; ctx.fill();
+  // rim
+  ctx.beginPath(); ctx.arc(x,y,r,0,TAU);
+  ctx.strokeStyle=rgba.replace('A',hov?'.45':'.18');
+  ctx.lineWidth=hov?1.2:.6; ctx.stroke();
+  // highlight
+  ctx.beginPath(); ctx.arc(x-r*.26,y-r*.27,r*.28,0,TAU);
+  ctx.fillStyle='rgba(255,255,255,.3)'; ctx.fill();
+}
+
+/* ═══════════════════ ENTITY CONFIGS ═══════════════════ */
+const CONFIGS = {
+  rec: {
+    canvasId:'c-rec', panelId:'panel-rec',
+    num:'Structure 01 · SAS · Est. 2020',
+    name:'REC\nMACHINE', nameColor:'var(--white)',
+    tagline:'Production audiovisuelle. Direction artistique. Studio.',
+    body:'Le moteur opérationnel de la Maison. Production film, réalisation vidéo, production musicale, direction artistique et post-production. Certifié DGAC S1·S2·S3. +1M de vues cumulées.',
+    cta:'Demander un devis',
+    coreColor:'rgba(226,202,144,A)',
+    panelColor:'rgb(226,202,144)',
+    nebulaRgb:'60,42,8',
+    tint:'rgba(226,202,144,.06)',
+    coreName:'RECMACHINE',
+    satellites:[
+      {label:'PRODUCTION FILM',  sub:'publicité · clips · cinéma',    size:.018, speed:.0072, angle:0,    ring:false,
+       content:{label:'RECMACHINE',title:'PRODUCTION FILM',cta:'Demander un devis',
+        desc:'Clips musicaux, films publicitaires, courts-métrages. De l\'idée au rendu final — direction artistique, tournage, post-production.',
+        items:[{tag:'Clip',name:'PROJET 001',sub:'Bientôt disponible'},{tag:'Pub',name:'PROJET 002',sub:'Bientôt disponible'},{tag:'Film',name:'PROJET 003',sub:'Bientôt disponible'}]}},
+      {label:'POST-PRODUCTION',  sub:'montage · étalonnage · motion',  size:.015, speed:.0055, angle:1.8,  ring:false,
+       content:{label:'RECMACHINE',title:'POST-PRODUCTION',cta:'Demander un devis',
+        desc:'Montage, étalonnage colorimétrique, motion design. La finition qui transforme le brut en œuvre.',
+        items:[{tag:'Motion',name:'PROJET 001',sub:'Bientôt disponible'},{tag:'Color',name:'PROJET 002',sub:'Bientôt disponible'}]}},
+      {label:'PROD. MUSICALE',   sub:'studio · label · distribution',  size:.017, speed:.0040, angle:3.2,  ring:false,
+       content:{label:'RECMACHINE',title:'PRODUCTION MUSICALE',cta:'Demander un devis',
+        desc:'Studio de production, label indépendant, distribution numérique et physique. De la composition à l\'oreille du monde.',
+        items:[{tag:'Label',name:'PROJET 001',sub:'Bientôt disponible'},{tag:'Studio',name:'PROJET 002',sub:'Bientôt disponible'}]}},
+      {label:'DRONE DGAC',       sub:'S1 · S2 · S3 · aérien',          size:.013, speed:.0062, angle:4.8,  ring:false,
+       content:{label:'RECMACHINE',title:'DRONE DGAC',cta:'Demander un devis',
+        desc:'Opérations aériennes certifiées DGAC S1, S2 et S3. Immobilier, événements, nature, industrie, cinéma.',
+        items:[{tag:'Aérien',name:'PROJET 001',sub:'Bientôt disponible'},{tag:'Event',name:'PROJET 002',sub:'Bientôt disponible'}]}},
+      {label:'DIR. ARTISTIQUE',  sub:'identité · vision · branding',   size:.014, speed:.0048, angle:2.5,  ring:false,
+       content:{label:'RECMACHINE',title:'DIRECTION ARTISTIQUE',cta:'Demander un devis',
+        desc:'Identité visuelle, concepts créatifs, stratégie de l\'image. Pour les marques et les artistes qui veulent un univers cohérent.',
+        items:[{tag:'Branding',name:'PROJET 001',sub:'Bientôt disponible'},{tag:'Identité',name:'PROJET 002',sub:'Bientôt disponible'}]}},
+    ]
+  },
+  oana: {
+    canvasId:'c-oana', panelId:'panel-oana',
+    num:'Structure 02 · Association · 2025',
+    name:'OANA', nameColor:'var(--white)',
+    tagline:'Oasis Nancee Association. Culture & territoire en Normandie.',
+    body:'Fédérer, structurer et développer le secteur créatif normand. Événements culturels, soutien institutionnel, projets de développement territorial, partenariats collectivités.',
+    cta:'Nous rejoindre',
+    coreColor:'rgba(138,188,218,A)',
+    panelColor:'rgb(138,188,218)',
+    nebulaRgb:'12,32,52',
+    tint:'rgba(138,188,218,.06)',
+    coreName:'OANA',
+    satellites:[
+      {label:'ÉVÉNEMENTS',       sub:'culturels & artistiques',         size:.018, speed:.0060, angle:.6,   ring:false,
+       content:{label:'OANA',title:'ÉVÉNEMENTS',cta:'Nous rejoindre',
+        desc:'Concerts, expositions, performances, résidences artistiques. La culture normande mise en scène, en lumière, en mouvement.',
+        items:[{tag:'Event',name:'PROJET 001',sub:'Bientôt disponible'},{tag:'Expo',name:'PROJET 002',sub:'Bientôt disponible'}]}},
+      {label:'DEV. TERRITORIAL', sub:'projets · impact · Normandie',    size:.020, speed:.0040, angle:2.5,  ring:false,
+       content:{label:'OANA',title:'DÉVELOPPEMENT TERRITORIAL',cta:'Nous rejoindre',
+        desc:'Structuration du secteur créatif normand. Projets à impact durable, partenariats institutionnels, développement de filières culturelles.',
+        items:[{tag:'Projet',name:'PROJET 001',sub:'Bientôt disponible'},{tag:'Territoire',name:'PROJET 002',sub:'Bientôt disponible'}]}},
+      {label:'SOUTIEN INST.',    sub:'collectivités · institutions',    size:.015, speed:.0055, angle:4.2,  ring:false,
+       content:{label:'OANA',title:'SOUTIEN INSTITUTIONNEL',cta:'Nous rejoindre',
+        desc:'Interface entre le secteur créatif et les institutions. Subventions, appels à projets, fonds culturels, mécénat.',
+        items:[{tag:'Subvention',name:'PROJET 001',sub:'Bientôt disponible'},{tag:'Fonds',name:'PROJET 002',sub:'Bientôt disponible'}]}},
+      {label:'PUBLIC · MEMBRES', sub:'adhésions · communauté',          size:.013, speed:.0035, angle:1.0,  ring:false,
+       content:{label:'OANA',title:'PUBLIC & MEMBRES',cta:'Nous rejoindre',
+        desc:'Construction d\'une communauté créative normande. Adhésions, ateliers, rencontres professionnelles, mise en réseau.',
+        items:[{tag:'Communauté',name:'PROJET 001',sub:'Bientôt disponible'},{tag:'Atelier',name:'PROJET 002',sub:'Bientôt disponible'}]}},
+    ]
+  },
+  astrvm: {
+    canvasId:'c-astrvm', panelId:'panel-astrvm',
+    num:'Structure 03 · Lifestyle · DA · Merch',
+    name:'ASTRA\nMORA', nameColor:'#c8a84b',
+    tagline:'Direction artistique. Collections. La lumière dans le monde réel.',
+    body:'Création vestimentaire pour live, clip, cinéma. Collections spéciales, éditions limitées, pièces valorisées. Collaboration entre marques. SKAN — pièces vestimentaires digitales.',
+    cta:'Collaborer',
+    coreColor:'rgba(200,168,75,A)',
+    panelColor:'rgb(200,168,75)',
+    nebulaRgb:'62,42,6',
+    tint:'rgba(200,168,75,.07)',
+    coreName:'ASTRAMORA',
+    satellites:[
+      {label:'DIR. ARTISTIQUE',  sub:'vision · stratégie · design',     size:.018, speed:.0052, angle:.9,   ring:false,
+       content:{label:'ASTRAMORA',title:'DIRECTION ARTISTIQUE',cta:'Collaborer',
+        desc:'Direction artistique pour l\'écosystème et les marques partenaires. Histoire de marque, vision, design original — construire un univers qui dure.',
+        items:[{tag:'DA',name:'PROJET 001',sub:'Bientôt disponible'},{tag:'Branding',name:'PROJET 002',sub:'Bientôt disponible'}]}},
+      {label:'VÊTEMENTS',        sub:'live · clip · cinéma · concert',  size:.020, speed:.0038, angle:2.4,  ring:false,
+       content:{label:'ASTRAMORA',title:'VÊTEMENTS',cta:'Collaborer',
+        desc:'Création vestimentaire pour les univers live, clip, cinéma et concert. Pièces conçues pour être vues en mouvement, portées avec intention.',
+        items:[{tag:'Live',name:'PROJET 001',sub:'Bientôt disponible'},{tag:'Clip',name:'PROJET 002',sub:'Bientôt disponible'},{tag:'Cinéma',name:'PROJET 003',sub:'Bientôt disponible'}]}},
+      {label:'COLLAB. MARQUES',  sub:'histoire · design · éditions',    size:.015, speed:.0045, angle:4.0,  ring:false,
+       content:{label:'ASTRAMORA',title:'COLLABORATION MARQUES',cta:'Collaborer',
+        desc:'Co-créations avec des marques partageant la vision. Design original, éditions spéciales, stratégie partagée sur le long terme.',
+        items:[{tag:'Collab',name:'PROJET 001',sub:'Bientôt disponible'},{tag:'Édition',name:'PROJET 002',sub:'Bientôt disponible'}]}},
+      {label:'COLLECTIONS',      sub:'éditions limitées · capsule',     size:.017, speed:.0042, angle:1.1,  ring:false,
+       content:{label:'ASTRAMORA',title:'COLLECTIONS',cta:'Collaborer',
+        desc:'Collections capsule, éditions limitées, pièces valorisées. L\'esthétique de la Maison portée dans le monde réel — chaque pièce est une déclaration.',
+        items:[{tag:'Collection',name:'DROP 001',sub:'Bientôt disponible'},{tag:'Édition',name:'DROP 002',sub:'Bientôt disponible'},{tag:'Pièce',name:'DROP 003',sub:'Bientôt disponible'}]}},
+      {label:'SKAN',             sub:'pièces vestimentaires digitales', size:.012, speed:.0065, angle:3.5,  ring:false,
+       content:{label:'ASTRAMORA',title:'SKAN',cta:'Collaborer',
+        desc:'Pièces vestimentaires digitales. Communication, localisation, détection, sensibilité, sécurité. L\'avenir du vêtement connecté.',
+        items:[{tag:'Digital',name:'PROJET 001',sub:'En développement'},{tag:'R&D',name:'PROJET 002',sub:'En développement'}]}},
+    ]
+  }
+};
+
+/* ═══════════════════ HOME CANVAS ═══════════════════ */
+(function initHome(){
+  const canvas=document.getElementById('c-home');
+  const ctx=canvas.getContext('2d');
+  let W,H,stars,t=0,hovP=null;
+
+  const PLANETS=[
+    {id:'rec',   label:'RECMACHINE', sub:'PRODUCTION · SAS',     rgba:'rgba(226,202,144,A)', orbitR:0,size:0,angle:.4,  speed:.0028,ring:false},
+    {id:'oana',  label:'OANA',       sub:'CULTURE · ASSO',        rgba:'rgba(138,188,218,A)', orbitR:0,size:0,angle:2.2, speed:.0018,ring:false},
+    {id:'astrvm',label:'ASTRAMORA',  sub:'LIFESTYLE · DA · MERCH',rgba:'rgba(200,168,75,A)',  orbitR:0,size:0,angle:4.5, speed:.0013,ring:true }
+  ];
+
+  let CX,CY;
+
+  function setup(){
+    W=canvas.width=window.innerWidth;
+    H=canvas.height=window.innerHeight;
+    stars=createStars(W,H);
+    CX=W*.62; CY=H*.5;
+    const b=Math.min(W,H);
+    PLANETS[0].orbitR=b*.19; PLANETS[0].size=b*.016;
+    PLANETS[1].orbitR=b*.29; PLANETS[1].size=b*.014;
+    PLANETS[2].orbitR=b*.40; PLANETS[2].size=b*.021;
+  }
+
+  function drawCore(){
+    const cr=Math.min(W,H)*.052;
+    // halo
+    const hg=ctx.createRadialGradient(CX,CY,0,CX,CY,cr*5.5);
+    hg.addColorStop(0,'rgba(255,255,255,.13)');
+    hg.addColorStop(.35,'rgba(242,240,230,.04)');
+    hg.addColorStop(1,'transparent');
+    ctx.beginPath();ctx.arc(CX,CY,cr*5.5,0,TAU);ctx.fillStyle=hg;ctx.fill();
+    // body
+    const cg=ctx.createRadialGradient(CX,CY,0,CX,CY,cr);
+    cg.addColorStop(0,'#ffffff');
+    cg.addColorStop(.45,'rgba(242,240,228,.88)');
+    cg.addColorStop(1,'rgba(200,168,75,.07)');
+    ctx.beginPath();ctx.arc(CX,CY,cr,0,TAU);ctx.fillStyle=cg;ctx.fill();
+    // inner
+    ctx.beginPath();ctx.arc(CX,CY,cr*.3,0,TAU);ctx.fillStyle='#fff';ctx.fill();
+    // label
+    ctx.save();
+    ctx.font="6.5px 'DM Mono'";
+    ctx.fillStyle='rgba(242,240,235,.36)';
+    ctx.textAlign='center';ctx.letterSpacing='4px';
+    ctx.fillText('MAISONWRLD',CX,CY+cr+15);
+    ctx.restore();
+  }
+
+  function drawPlanet(p){
+    const px=CX+Math.cos(p.angle)*p.orbitR;
+    const py=CY+Math.sin(p.angle)*p.orbitR;
+    p._x=px; p._y=py;
+    const hov=p===hovP;
+    const ps=hov?1.28:1+Math.sin(t*.014+p.angle)*.05;
+    const sz=p.size*ps;
+
+    drawGlow(ctx,px,py,sz,p.rgba,hov);
+
+    if(p.ring){
+      ctx.save();ctx.translate(px,py);ctx.rotate(-.38);ctx.scale(1,.24);
+      ctx.beginPath();ctx.arc(0,0,sz*2.3,0,TAU);
+      ctx.strokeStyle=hov?'rgba(200,168,75,.6)':'rgba(200,168,75,.3)';
+      ctx.lineWidth=1.4;ctx.stroke();
+      ctx.beginPath();ctx.arc(0,0,sz*2.85,0,TAU);
+      ctx.strokeStyle=hov?'rgba(200,168,75,.25)':'rgba(200,168,75,.1)';
+      ctx.lineWidth=.8;ctx.stroke();
+      ctx.restore();
+    }
+
+    // label
+    const lx=px+sz+14;
+    ctx.save();
+    ctx.font=`${hov?'400':'300'} 11px 'DM Mono'`;
+    ctx.fillStyle=hov?'rgba(242,240,235,1)':'rgba(242,240,235,.8)';
+    ctx.letterSpacing='3px';ctx.textAlign='left';
+    ctx.fillText(p.label,lx,py-2);
+    ctx.font="7px 'DM Mono'";
+    ctx.fillStyle=hov?'rgba(200,168,75,.85)':'rgba(242,240,235,.4)';
+    ctx.letterSpacing='2px';
+    ctx.fillText(p.sub,lx,py+14);
+    ctx.restore();
+  }
+
+  function drawBg(){
+    ctx.fillStyle='rgba(0,0,2,1)';
+    ctx.fillRect(0,0,W,H);
+    const ng=ctx.createRadialGradient(CX,CY*.72,0,CX,CY*.72,W*.3);
+    ng.addColorStop(0,'rgba(8,8,26,.32)');
+    ng.addColorStop(1,'transparent');
+    ctx.fillStyle=ng;ctx.fillRect(0,0,W,H);
+  }
+
+  function drawRing(r,dash){
+    ctx.beginPath();ctx.arc(CX,CY,r,0,TAU);
+    ctx.strokeStyle='rgba(242,240,235,.08)';
+    ctx.lineWidth=.7;
+    if(dash)ctx.setLineDash([3,9]);else ctx.setLineDash([]);
+    ctx.stroke();ctx.setLineDash([]);
+  }
+
+  function loop(){
+    ctx.clearRect(0,0,W,H);
+    drawBg();
+    drawStars(ctx,stars,t);
+    PLANETS.forEach((p,i)=>drawRing(p.orbitR,i===1));
+    PLANETS.forEach(p=>{ p.angle+=p.speed; drawPlanet(p); });
+    drawCore();
+    t++;
+    requestAnimationFrame(loop);
+  }
+
+  function getHit(mx,my){
+    for(const p of PLANETS){
+      if(p._x===undefined) continue;
+      const d=Math.hypot(mx-p._x,my-p._y);
+      if(d<p.size*3.2+16) return p;
+    }
+    return null;
+  }
+
+  canvas.addEventListener('mousemove',ev=>{
+    if(currentView!=='home') return;
+    const p=getHit(ev.clientX,ev.clientY);
+    hovP=p;
+    if(p){
+      setCur(true, CONFIGS[p.id].panelColor);
+      showTip(ev.clientX,ev.clientY,p.label,p.sub,'Cliquer pour entrer →',CONFIGS[p.id].panelColor);
+    } else { setCur(false); hideTip(); }
+  });
+
+  canvas.addEventListener('click',ev=>{
+    if(currentView!=='home') return;
+    const p=getHit(ev.clientX,ev.clientY);
+    if(p) showView(p.id);
+  });
+
+  canvas.addEventListener('mouseleave',()=>{ hovP=null; hideTip(); setCur(false); });
+
+  setup();
+  loop();
+  window.addEventListener('resize',setup);
+})();
+
+/* ═══════════════════ ENTITY VIEW BUILDER ═══════════════════ */
+const _inited={};
+
+function initEntityView(id){
+  if(_inited[id]) return;
+  _inited[id]=true;
+
+  const cfg=CONFIGS[id];
+  if(!cfg) return;
+
+  /* PANEL */
+  const panel=document.getElementById(cfg.panelId);
+  panel.innerHTML=`
+    <div class="ep-num fi">${cfg.num}</div>
+    <div class="ep-name fi fi1" style="color:${cfg.nameColor}">${cfg.name}</div>
+    <div class="ep-tagline fi fi2">${cfg.tagline}</div>
+    <div class="ep-body fi fi3">${cfg.body}</div>
+    <div class="ep-hint fi fi4">— Cliquer sur un satellite →</div>
+    <a href="mailto:contact@maisonwrld.com" class="ep-cta fi fi5">${cfg.cta}</a>
+  `;
+  panel.querySelector('.ep-cta').addEventListener('mouseenter',()=>setCur(true));
+  panel.querySelector('.ep-cta').addEventListener('mouseleave',()=>setCur(false));
+
+  /* CANVAS */
+  const canvas=document.getElementById(cfg.canvasId);
+  const ctx=canvas.getContext('2d');
+  let W,H,stars,bodies;
+  let t=0, hovSat=null;
+
+  function setup(){
+    W=canvas.width=window.innerWidth;
+    H=canvas.height=window.innerHeight;
+    stars=createStars(W,H);
+    const base=Math.min(W,H);
+    const isMobile = W < 768;
+const panW = isMobile ? 0 : Math.min(420,W*.4);
+const ecx = isMobile ? W * .72 : panW+(W-panW)*.52;
+const ecy = isMobile ? H * .55 : H*.5;
+    const step=base*.082;
+
+    bodies=cfg.satellites.map((s,i)=>({
+      ...s,
+      cx:ecx, cy:ecy,
+      orbitR:base*.1+step*(i+1),
+      angle:s.angle??rand(0,TAU),
+      actualSpeed:s.speed*(i%2===0?1:-1),
+      sz:s.size*base,
+      rgba:cfg.coreColor,
+      panelColor:cfg.panelColor,
+      _x:0, _y:0
+    }));
+    bodies._cx=ecx; bodies._cy=ecy; bodies._base=base;
+  }
+
+  function drawEntityBg(cx,cy){
+    ctx.fillStyle='rgba(0,0,2,1)'; ctx.fillRect(0,0,W,H);
+    const ng=ctx.createRadialGradient(cx,cy,0,cx,cy,W*.3);
+    ng.addColorStop(0,`rgba(${cfg.nebulaRgb},.18)`);
+    ng.addColorStop(1,'transparent');
+    ctx.fillStyle=ng; ctx.fillRect(0,0,W,H);
+  }
+
+  function drawEntityCore(cx,cy,base){
+    const cr=base*.048;
+    const hg=ctx.createRadialGradient(cx,cy,0,cx,cy,cr*5);
+    hg.addColorStop(0,cfg.coreColor.replace('A','.3'));
+    hg.addColorStop(1,'transparent');
+    ctx.beginPath();ctx.arc(cx,cy,cr*5,0,TAU);ctx.fillStyle=hg;ctx.fill();
+
+    const cg=ctx.createRadialGradient(cx,cy,0,cx,cy,cr);
+    cg.addColorStop(0,'rgba(255,255,255,1)');
+    cg.addColorStop(.5,cfg.coreColor.replace('A','.85'));
+    cg.addColorStop(1,cfg.coreColor.replace('A','.07'));
+    ctx.beginPath();ctx.arc(cx,cy,cr,0,TAU);ctx.fillStyle=cg;ctx.fill();
+    ctx.beginPath();ctx.arc(cx,cy,cr*.3,0,TAU);ctx.fillStyle='#fff';ctx.fill();
+
+    ctx.save();
+    ctx.font="6px 'DM Mono'";
+    ctx.fillStyle=cfg.coreColor.replace('A','.4');
+    ctx.textAlign='center';ctx.letterSpacing='3px';
+    ctx.fillText(cfg.coreName,cx,cy+cr+13);
+    ctx.restore();
+  }
+
+  function drawSatellite(b){
+    b.angle+=b.actualSpeed;
+    const px=b.cx+Math.cos(b.angle)*b.orbitR;
+    const py=b.cy+Math.sin(b.angle)*b.orbitR;
+    b._x=px; b._y=py;
+
+    const hov=b===hovSat;
+    // orbit ring
+    ctx.beginPath();ctx.arc(b.cx,b.cy,b.orbitR,0,TAU);
+    ctx.strokeStyle=hov?cfg.coreColor.replace('A','.15'):'rgba(242,240,235,.07)';
+    ctx.lineWidth=hov?.9:.6;ctx.setLineDash([]);ctx.stroke();
+
+    const pulse=1+Math.sin(t*.012+b.angle)*.05;
+    const sz=b.sz*(hov?1.3:pulse);
+    drawGlow(ctx,px,py,sz,cfg.coreColor,hov);
+
+    // indicator dot on top of sat
+    if(hov){
+      ctx.beginPath();ctx.arc(px,py-sz-6,2.5,0,TAU);
+      ctx.fillStyle=cfg.panelColor;ctx.fill();
+    }
+
+    // labels
+    const lx=px+sz+13;
+    ctx.save();
+    ctx.font=`${hov?'400':'300'} 10px 'DM Mono'`;
+    ctx.fillStyle=hov?cfg.panelColor:'rgba(242,240,235,.9)';
+    ctx.letterSpacing='2px';ctx.textAlign='left';
+    ctx.fillText(b.label,lx,py-2);
+    ctx.font="7px 'DM Mono'";
+    ctx.fillStyle='rgba(242,240,235,.48)';
+    ctx.letterSpacing='1.5px';
+    ctx.fillText(b.sub,lx,py+13);
+    ctx.restore();
+  }
+
+  function loop(){
+    ctx.clearRect(0,0,W,H);
+    if(!bodies){t++;requestAnimationFrame(loop);return;}
+    const cx=bodies._cx,cy=bodies._cy,base=bodies._base;
+    drawEntityBg(cx,cy);
+    drawStars(ctx,stars,t);
+    bodies.forEach(b=>drawSatellite(b));
+    drawEntityCore(cx,cy,base);
+    t++;
+    requestAnimationFrame(loop);
+  }
+
+  function getHitSat(mx,my){
+    if(!bodies) return null;
+    for(const b of bodies){
+      const d=Math.hypot(mx-b._x,my-b._y);
+      if(d<b.sz*3.2+16) return b;
+    }
+    return null;
+  }
+
+  canvas.addEventListener('mousemove',ev=>{
+    if(currentView!==id) return;
+    const b=getHitSat(ev.clientX,ev.clientY);
+    hovSat=b;
+    if(b){
+      setCur(true,cfg.panelColor);
+      showTip(ev.clientX,ev.clientY,b.label,b.sub,'Voir les détails →',cfg.panelColor);
+    } else { setCur(false); hideTip(); }
+  });
+
+  canvas.addEventListener('click',ev=>{
+    if(currentView!==id) return;
+    const b=getHitSat(ev.clientX,ev.clientY);
+    if(b) openSidePanel(b);
+  });
+
+  canvas.addEventListener('mouseleave',()=>{ hovSat=null; hideTip(); setCur(false); });
+
+  setup();
+  loop();
+  window.addEventListener('resize',setup);
+}
+
+/* UI cursor on buttons */
+document.querySelectorAll('.n-logo,.n-btn,#sp-close').forEach(el=>{
+  el.addEventListener('mouseenter',()=>setCur(true));
+  el.addEventListener('mouseleave',()=>setCur(false));
+});
+</script>
+</body>
+</html>
