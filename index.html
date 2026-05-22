@@ -361,70 +361,138 @@ canvas { position:absolute; inset:0; display:block; }
 .fi1{animation-delay:.06s} .fi2{animation-delay:.16s}
 .fi3{animation-delay:.28s} .fi4{animation-delay:.42s}
 .fi5{animation-delay:.56s}
-@media (max-width: 768px){
-
-  body{
-    overflow:auto;
+@media (max-width: 768px) {
+  html, body {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
   }
 
-  .view{
-    flex-direction:column;
-    padding:110px 24px 60px;
-    gap:40px;
-    height:auto;
-    min-height:100vh;
+  #cur, #cur-ring, #hint, #tip, #universe-badge {
+    display: none !important;
   }
 
-  .left{
-    width:100%;
-    max-width:100%;
-    padding-right:0;
+  nav {
+    padding: 64px 28px 0;
   }
 
-  .left h1{
-    font-size:64px;
-    line-height:.9;
+  .n-logo {
+    font-size: 10px;
+    letter-spacing: 7px;
   }
 
-  .left p{
-    font-size:18px;
-    line-height:1.7;
-    max-width:100%;
+  .n-right {
+    gap: 28px;
   }
 
-  .orbit-wrap{
-    width:100%;
-    height:55vh;
-    min-height:420px;
+  .n-btn {
+    font-size: 9px;
+    letter-spacing: 5px;
   }
 
-  .panel{
-    width:100%;
-    right:-100%;
+  #home-text {
+    left: 32px;
+    right: 32px;
+    top: auto;
+    bottom: 140px;
+    transform: none;
+    max-width: 330px;
+    z-index: 120;
   }
 
-  .panel.open{
-    right:0;
+  #home-text h1 {
+    font-size: 56px;
+    line-height: .9;
+    letter-spacing: 2px;
   }
 
-  nav{
-    padding:20px 24px;
+  #home-text .ht-sub {
+    font-size: 20px;
+    line-height: 1.6;
   }
 
-  .n-right{
-    gap:18px;
-    font-size:11px;
+  #home-text .ht-structs {
+    font-size: 8px;
+    letter-spacing: 5px;
   }
 
-  .ep-title{
-    font-size:42px;
+  .ent-panel {
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 120px 32px 40px;
+    justify-content: flex-start;
+    z-index: 120;
   }
 
-  .ep-text{
-    font-size:17px;
-    line-height:1.8;
+  .ep-name {
+    font-size: 58px;
+    line-height: .82;
+    max-width: 320px;
+    overflow-wrap: normal;
   }
 
+  .ep-tagline {
+    font-size: 22px;
+    line-height: 1.5;
+    max-width: 280px;
+  }
+
+  .ep-body {
+    font-size: 16px;
+    line-height: 1.75;
+    max-width: 260px;
+  }
+
+  .ep-num, .ep-hint, .ep-cta {
+    display: none;
+  }
+
+  canvas {
+    transform: translateX(18%);
+    opacity: .78;
+  }
+
+  #side-panel {
+    width: 100%;
+    transform: translateX(100%);
+    z-index: 999;
+  }
+
+  #side-panel.open {
+    transform: translateX(0);
+  }
+
+  #sp-close-row {
+    padding: 64px 32px 0;
+  }
+
+  #sp-body {
+    padding: 80px 32px 80px;
+  }
+
+  .sp-title {
+    font-size: 54px;
+    line-height: .9;
+    letter-spacing: 3px;
+    max-width: 330px;
+  }
+
+  .sp-desc {
+    font-size: 22px;
+    line-height: 1.6;
+    max-width: 300px;
+  }
+
+  .sp-item {
+    padding: 22px 0;
+    background: transparent;
+    border-top: 1px solid rgba(242,240,235,.08);
+  }
+
+  .sp-item-name {
+    font-size: 22px;
+  }
 }
 </style>
 </head>
@@ -452,7 +520,7 @@ canvas { position:absolute; inset:0; display:block; }
 <nav>
   <span class="n-logo" id="nav-logo">MAISONWRLD</span>
   <div class="n-right">
-    <a href="mailto:contact@maisonwrld.com" class="n-btn">Contact</a>
+    <a href="mailto:maisonwrldbyrecmachine@gmail.com" class="n-btn">Contact</a>
     <span class="n-btn n-back" id="nav-back" style="display:none">Retour</span>
   </div>
 </nav>
