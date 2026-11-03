@@ -10,3 +10,16 @@ for(const [path,content] of Object.entries(files)){
  await mkdir(dirname(target),{recursive:true});await writeFile(target,content);
 }
 console.log('MaisonWRLD + ASTRAMORA : '+Object.keys(files).length+' fichiers préparés.');
+
+// RECMACHINE: editable sources, owned image archive and four archived video files.
+const rec=JSON.parse(await readFile('recmachine-source.json','utf8'));
+for(const [path,content]of Object.entries(rec.files)){
+ if(!path.startsWith('recmachine/')||path.split('/').some(x=>x==='..'||x==='.')||typeof content!=='string')throw Error('Invalid RECMACHINE source');
+ const target=resolve(output,path);if(!target.startsWith(output+'/'))throw Error('Invalid target');await mkdir(dirname(target),{recursive:true});await writeFile(target,content);
+}
+for(const [path,content]of Object.entries(rec.assets)){
+ if(!path.startsWith('recmachine/assets/')||path.split('/').some(x=>x==='..'||x==='.')||typeof content!=='string')throw Error('Invalid RECMACHINE media');
+ const target=resolve(output,path);if(!target.startsWith(output+'/'))throw Error('Invalid target');await mkdir(dirname(target),{recursive:true});await writeFile(target,Buffer.from(content,'base64'));
+}
+for(const name of ['si-tu-maimes','24x','performance','spacelab'])await copyFile('rec-'+name+'.mp4',resolve(output,'recmachine/assets/'+name+'.mp4'));
+console.log('RECMACHINE : catalogue, images et vidéos archivées préparés.');
