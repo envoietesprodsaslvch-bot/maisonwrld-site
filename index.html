@@ -884,7 +884,7 @@ const CONFIGS = {
             "content": {
                 "label": "ASTRAMORA / 02",
                 "title": "HABILLER UN MOMENT",
-                "desc": "Une tenue pour un artiste en tournée, une apparition à l’écran ou un événement singulier. La pièce se pense avec son usage : mouvement, lumière, silhouette et détails personnels. Chaque projet reste à développer avec un couturier.",
+                "desc": "Une tenue pour un artiste en tournée, une apparition à l’écran ou un événement singulier. La pièce se pense avec son usage : mouvement, lumière, silhouette et détails personnels. Une intention à faire éclore avec ORA, le Couturier astral de la maison. Le développement du patron, le prototype et les essayages demandent ensuite l’expertise d’un atelier humain.",
                 "cta": "Explorer les créations ↗",
                 "href": "/astramora/#pieces",
                 "items": [
@@ -1038,8 +1038,8 @@ const CONFIGS = {
   let CX,CY;
 
   function setup(){
-    W=canvas.width=window.innerWidth;
-    H=canvas.height=window.innerHeight;
+    W=window.innerWidth;H=window.innerHeight;
+    const dpr=Math.min(window.devicePixelRatio||1,3);canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0);
     stars=createStars(W,H);
     CX=W*.62; CY=H*.5;
     const b=Math.min(W,H);
@@ -1197,10 +1197,18 @@ function initEntityView(id){
   const ctx=canvas.getContext('2d');
   let W,H,stars,bodies;
   let t=0, hovSat=null;
+  const astralContent={label:'ASTRAMORA / ASTRE CENTRAL',title:'ORA, LE COUTURIER ASTRAL',desc:'L’astre qui relie votre intention à votre silhouette. ORA est une figure originale de la maison : un compagnon de création pour faire émerger une idée, explorer ses lignes et lire ses détails. Dans l’atelier, sa version actuelle fonctionne localement avec des règles, sans IA générative ni API payante. La confection reste le geste d’un artisan.',cta:'Créer avec ORA ↗',href:'/astramora/atelier.html',items:[{tag:'01 · L’étincelle',name:'EXPRIMER UNE INTENTION',sub:'Une scène, une émotion, une allure : poser le premier fil.',href:'/astramora/atelier.html'},{tag:'02 · Le fil',name:'COMPOSER SA SILHOUETTE',sub:'Choisir les coupes, matières et détails disponibles ; confirmer chaque proposition.',href:'/astramora/atelier.html'},{tag:'03 · La constellation',name:'PRÉPARER LE DIALOGUE',sub:'Conserver le plan et les choix pour l’étude du couturier. Dans l’atelier, ouvrir « Discuter avec ORA ».',href:'/astramora/atelier.html'}]};
+  let astralLabels=[],astralCore;
+  if(id==='astrvm'){
+    const layer=document.createElement('div');layer.className='astral-label-layer';layer.setAttribute('aria-label','Constellation ASTRAMORA');canvas.after(layer);
+    astralLabels=cfg.satellites.map((sat,i)=>{const b=document.createElement('button');b.type='button';b.className='astral-label';b.innerHTML='<span class="astral-number">'+String(i+1).padStart(2,'0')+'</span><strong>'+sat.label+'</strong><small>'+sat.sub+'</small>';b.onclick=()=>openSidePanel({...sat,panelColor:cfg.panelColor});b.onmouseenter=()=>{hovSat=bodies?.[i]};b.onmouseleave=()=>{hovSat=null};layer.append(b);return b;});
+    astralCore=document.createElement('button');astralCore.className='astral-core';astralCore.type='button';astralCore.innerHTML='<span>ORA</span><strong>LE COUTURIER ASTRAL</strong><small>Suivre le fil de votre idée ↗</small>';astralCore.onclick=()=>openSidePanel({content:astralContent,panelColor:cfg.panelColor});layer.append(astralCore);
+    const meet=document.createElement('button');meet.type='button';meet.className='astral-meet';meet.textContent='✦ Rencontrer le Couturier astral';meet.onclick=astralCore.onclick;panel.querySelector('.ep-cta').after(meet);
+  }
 
   function setup(){
-    W=canvas.width=window.innerWidth;
-    H=canvas.height=window.innerHeight;
+    W=window.innerWidth;H=window.innerHeight;
+    const dpr=Math.min(window.devicePixelRatio||1,3);canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0);
     stars=createStars(W,H);
     const base=Math.min(W,H);
     const isMobile = W < 768;
@@ -1212,8 +1220,9 @@ const ecy = isMobile ? H * .55 : H*.5;
     bodies=cfg.satellites.map((s,i)=>({
       ...s,
       cx:ecx, cy:ecy,
-      orbitR:base*.1+step*(i+1),
-      angle:s.angle??rand(0,TAU),
+      orbitR:id==='astrvm'?base*(.25+i*.022):base*.1+step*(i+1),
+      angle:id==='astrvm'?[-2.15,-1.05,.02,1.07,2.12,3.16][i]:(s.angle??rand(0,TAU)),
+      slot:i,
       actualSpeed:s.speed*(i%2===0?1:-1),
       sz:s.size*base,
       rgba:cfg.coreColor,
@@ -1249,12 +1258,17 @@ const ecy = isMobile ? H * .55 : H*.5;
     ctx.font="6px 'DM Mono'";
     ctx.fillStyle=cfg.coreColor.replace('A','.4');
     ctx.textAlign='center';ctx.letterSpacing='3px';
-    ctx.fillText(cfg.coreName,cx,cy+cr+13);
+    if(id!=='astrvm')ctx.fillText(cfg.coreName,cx,cy+cr+13);
     ctx.restore();
+    if(id==='astrvm'){
+      // A needle and an orbit of thread: the house’s original astral couturier emblem.
+      ctx.save();ctx.strokeStyle='#f4e7ba';ctx.lineWidth=1.25;ctx.beginPath();ctx.moveTo(cx-7,cy+11);ctx.lineTo(cx+8,cy-15);ctx.stroke();ctx.beginPath();ctx.ellipse(cx+6,cy-10,2,4,.5,0,TAU);ctx.stroke();ctx.beginPath();ctx.ellipse(cx,cy,cr*1.35,cr*.5,-.35,0,TAU);ctx.stroke();ctx.restore();
+      astralCore.style.left=Math.round(cx)+'px';astralCore.style.top=Math.round(cy+cr+49)+'px';
+    }
   }
 
   function drawSatellite(b){
-    b.angle+=b.actualSpeed;
+    if(id!=='astrvm')b.angle+=b.actualSpeed;
     const px=b.cx+Math.cos(b.angle)*b.orbitR;
     const py=b.cy+Math.sin(b.angle)*b.orbitR;
     b._x=px; b._y=py;
@@ -1275,6 +1289,21 @@ const ecy = isMobile ? H * .55 : H*.5;
       ctx.fillStyle=cfg.panelColor;ctx.fill();
     }
 
+    if(id==='astrvm'){
+      // Fine rings, a separate construction mark and a sharp locator per satellite.
+      ctx.save();ctx.strokeStyle=hov?'#f5e8bc':'#b6a16b';ctx.lineWidth=1;ctx.beginPath();ctx.arc(px,py,sz+5,0,TAU);ctx.stroke();
+      ctx.translate(px,py);ctx.rotate(b.slot*Math.PI/6);ctx.beginPath();
+      if(b.slot===0){ctx.moveTo(-4,0);ctx.lineTo(4,0);ctx.moveTo(0,-4);ctx.lineTo(0,4)}
+      if(b.slot===1){ctx.moveTo(0,-5);ctx.lineTo(5,0);ctx.lineTo(0,5);ctx.lineTo(-5,0);ctx.closePath()}
+      if(b.slot===2){for(let k=-3;k<=3;k+=3){ctx.moveTo(-5,k);ctx.lineTo(5,k)}}
+      if(b.slot===3){for(let k=0;k<6;k++){let a=k*TAU/6;ctx[k?'lineTo':'moveTo'](Math.cos(a)*5,Math.sin(a)*5)}ctx.closePath()}
+      if(b.slot===4){ctx.moveTo(0,-6);ctx.lineTo(0,6);ctx.ellipse(0,-3,2,3,0,0,TAU)}
+      if(b.slot===5){ctx.arc(-3,0,4,0,TAU);ctx.moveTo(7,0);ctx.arc(3,0,4,0,TAU)}ctx.stroke();ctx.restore();
+      const label=astralLabels[b.slot];const leftSide=Math.cos(b.angle)<-.2;const labelW=W<768?132:178;
+      const minX=W<768?10:Math.min(420,W*.4)+12;const labelX=leftSide?px-sz-labelW-16:px+sz+16;
+      label.style.left=Math.round(Math.max(minX,Math.min(W-labelW-12,labelX)))+'px';label.style.top=Math.round(Math.max(90,Math.min(H-90,py-22)))+'px';
+      return;
+    }
     // labels
     const lx=px+sz+13;
     ctx.save();
@@ -1322,6 +1351,7 @@ const ecy = isMobile ? H * .55 : H*.5;
 
   canvas.addEventListener('click',ev=>{
     if(currentView!==id) return;
+    if(id==='astrvm'&&Math.hypot(ev.clientX-bodies._cx,ev.clientY-bodies._cy)<bodies._base*.065){openSidePanel({content:astralContent,panelColor:cfg.panelColor});return;}
     const b=getHitSat(ev.clientX,ev.clientY);
     if(b) openSidePanel(b);
   });
@@ -1346,5 +1376,9 @@ document.querySelectorAll('.n-logo,.n-btn,#sp-close').forEach(el=>{
 document.getElementById('astramora-entry').onclick=e=>{e.preventDefault();showView('astrvm')};
 if(location.hash==='#astramora')showView('astrvm');
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSidePanel()});
-</script></body>
+</script><style>
+.astral-label-layer{position:absolute;inset:0;z-index:20;pointer-events:none}.astral-label,.astral-core{position:absolute;pointer-events:auto;cursor:pointer;color:#f1e8d1;text-align:left;border:0;background:#080909e8;padding:9px 11px;border-left:1px solid #8b794d;font-family:Arial,Helvetica,sans-serif;letter-spacing:0;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}.astral-label{width:178px;border-radius:0 5px 5px 0;box-sizing:border-box}.astral-label strong{display:block;font-size:13px;font-weight:600;line-height:1.35;letter-spacing:.035em}.astral-label small{display:block;color:#c4bcac;font-size:11px;line-height:1.45;margin-top:4px}.astral-number{font:10px var(--fm);color:#c7ae6d;float:right;margin-left:5px}.astral-label:hover,.astral-label:focus-visible{background:#30291b;border-left-color:#f5d57c;outline:1px solid #bda363}.astral-core{width:196px;transform:translate(-50%,-50%);text-align:center;background:#080909d9;border:1px solid #8b794d66;border-radius:7px;padding:12px}.astral-core span{display:block;font:27px var(--fs);color:#f3dfaa}.astral-core strong{display:block;font-size:11px;letter-spacing:.07em;margin:4px 0 6px}.astral-core small{font-size:11px;color:#c7bfae}.astral-core:hover,.astral-core:focus-visible{outline:1px solid #c7b17a;background:#282218}.astral-meet{border:1px solid #8f794b;background:#19160e;color:#e9d49e;font:12px Arial,sans-serif;padding:12px 10px;cursor:pointer;margin-top:10px;text-align:left}.ora-universe-nav button{font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:600;letter-spacing:.03em}.sp-item-name{font-size:21px;letter-spacing:1px}.sp-item-sub{font:12px/1.65 Arial,Helvetica,sans-serif;letter-spacing:.02em;text-transform:none}.sp-desc{line-height:1.8}#view-astrvm canvas{filter:none;opacity:1}
+@media(max-width:768px){.astral-label{width:132px;padding:7px}.astral-label strong{font-size:12px}.astral-label small{font-size:11px}.astral-label-layer{opacity:.35;pointer-events:none}.astral-label-layer button{pointer-events:none}.astral-core{width:174px}.astral-meet{display:block}#panel-astrvm{z-index:100}}
+@media(prefers-reduced-motion:reduce){.fi{animation:none}.view,#flash{transition:none}}
+</style></body>
 </html>
