@@ -631,6 +631,7 @@ function showView(id, entityColor) {
     document.querySelectorAll('.view').forEach(v=>v.classList.remove('show'));
     document.getElementById('view-'+id).classList.add('show');
     currentView=id;
+    if(id==='astrvm'||id==='home')history.replaceState(null,'',id==='astrvm'?'#astramora':location.pathname);
     navBack.style.display=(id==='home')?'none':'inline';
     hideTip();
     closeSidePanel();
@@ -695,13 +696,13 @@ function openSidePanel(sat) {
     <div class="sp-desc fi fi2">${c.desc||''}</div>
     <div class="sp-items fi fi3">
       ${(c.items||[]).map(it=>`
-        <div class="sp-item" style="--acc:${color}">
+        <${it.href?'a':'div'} ${it.href?`href="${it.href}"`:""} class="sp-item" style="--acc:${color}">
           <span class="sp-item-tag" style="color:${color}">${it.tag}</span>
           <span class="sp-item-name">${it.name}</span>
           <span class="sp-item-sub">${it.sub}</span>
-        </div>`).join('')}
+        </${it.href?'a':'div'}>`).join('')}
     </div>
-    <a href="mailto:maisonwrldbyrecmachine@gmail.com" class="sp-cta fi fi4"
+    <a href="${c.href || 'mailto:maisonwrldbyrecmachine@gmail.com'}" class="sp-cta fi fi4"
        style="background:${color}">${c.cta||'Nous contacter'}</a>
   `;
 
@@ -829,41 +830,197 @@ const CONFIGS = {
     ]
   },
   astrvm: {
-    canvasId:'c-astrvm', panelId:'panel-astrvm',
-    num:'Structure 03 · Maison de pièces uniques',
-    name:'ASTRA\nMORA', nameColor:'#c8a84b',
-    tagline:'Paraître. Et être. Une présence unique, une silhouette à inventer.',
-    body:'Maison de créations vestimentaires et accessoires uniques. Scène, cinéma, personnalités ORA et collaborations à construire. Explorez les coupes, matières et armures de mode dans notre atelier 3D ; chaque réalisation reste soumise à une validation artisanale.',
-    cta:'Entrer dans l’atelier',
-    href:'/astramora/atelier.html',
-    coreColor:'rgba(200,168,75,A)',
-    panelColor:'rgb(200,168,75)',
-    nebulaRgb:'62,42,6',
-    tint:'rgba(200,168,75,.07)',
-    coreName:'ASTRAMORA',
-    satellites:[
-      {label:'DIR. ARTISTIQUE',  sub:'vision · stratégie · design',     size:.018, speed:.0052, angle:.9,   ring:false,
-       content:{label:'ASTRAMORA',title:'DIRECTION ARTISTIQUE',cta:'Collaborer',
-        desc:'Direction artistique pour l\'écosystème et les marques partenaires. Histoire de marque, vision, design original — construire un univers qui dure.',
-        items:[{tag:'Création',name:'ATELIER ORA',sub:'Étude 3D personnalisable'},{tag:'Maison',name:'ASTRAMORA',sub:'Pièces uniques · univers astral'}]}},
-      {label:'PIÈCES UNIQUES',        sub:'live · clip · cinéma · concert',  size:.020, speed:.0038, angle:2.4,  ring:false,
-       content:{label:'ASTRAMORA',title:'PIÈCES UNIQUES',cta:'Collaborer',
-        desc:'Création vestimentaire pour les univers live, clip, cinéma et concert. Pièces conçues pour être vues en mouvement, portées avec intention.',
-        items:[{tag:'Création',name:'ATELIER ORA',sub:'Étude 3D personnalisable'},{tag:'Maison',name:'ASTRAMORA',sub:'Pièces uniques · univers astral'}]}},
-      {label:'COLLAB. MARQUES',  sub:'histoire · design · éditions',    size:.015, speed:.0045, angle:4.0,  ring:false,
-       content:{label:'ASTRAMORA',title:'COLLABORATION MARQUES',cta:'Collaborer',
-        desc:'Co-créations avec des marques partageant la vision. Design original, éditions spéciales, stratégie partagée sur le long terme.',
-        items:[{tag:'Création',name:'ATELIER ORA',sub:'Étude 3D personnalisable'},{tag:'Maison',name:'ASTRAMORA',sub:'Pièces uniques · univers astral'}]}},
-      {label:'ARMURES DE MODE',      sub:'éditions limitées · capsule',     size:.017, speed:.0042, angle:1.1,  ring:false,
-       content:{label:'ASTRAMORA',title:'ARMURES DE MODE',cta:'Collaborer',
-        desc:'Volumes souples ou structurés, éléments à aspect métallique et lignes astrales : une exploration esthétique à développer avec un couturier. Ces créations ne sont pas des équipements de protection ni des tenues spatiales fonctionnelles.',
-        items:[{tag:'Création',name:'ATELIER ORA',sub:'Étude 3D personnalisable'},{tag:'Maison',name:'ASTRAMORA',sub:'Pièces uniques · univers astral'}]}},
-      {label:'ATELIER ORA',             sub:'3D · personnalisation · assistant local', size:.012, speed:.0065, angle:3.5,  ring:false,
-       content:{label:'ASTRAMORA',title:'ATELIER ORA',cta:'Collaborer',
-        desc:'Composez une étude 3D avec les options proposées et le guide ORA local. Explorez coupe, matière, couleur et détails. Le rendu est indicatif : aucun patron, prix ni délai de fabrication n’est validé automatiquement.',
-        items:[{tag:'Création',name:'ATELIER ORA',sub:'Étude 3D personnalisable'},{tag:'Maison',name:'ASTRAMORA',sub:'Pièces uniques · univers astral'}]}},
+    "canvasId": "c-astrvm",
+    "panelId": "panel-astrvm",
+    "num": "MAISON 03 · COUTURE DE LA PRÉSENCE",
+    "name": "ASTRA\nMORA",
+    "nameColor": "#c8a84b",
+    "tagline": "Paraître. Et être.",
+    "body": "Des vêtements et accessoires uniques, imaginés autour d’une personne. Des silhouettes pour la scène, le cinéma et les apparitions qui comptent. Du premier élan à l’étude de création, entre geste humain et exploration numérique.",
+    "cta": "Composer ma silhouette ↗",
+    "href": "/astramora/atelier.html",
+    "coreColor": "rgba(200,168,75,A)",
+    "panelColor": "rgb(200,168,75)",
+    "nebulaRgb": "62,42,6",
+    "tint": "rgba(200,168,75,.07)",
+    "coreName": "ASTRAMORA",
+    "satellites": [
+        {
+            "label": "LES ORA",
+            "sub": "présences · personnalités",
+            "size": 0.014,
+            "speed": 0.0038,
+            "angle": 0.5,
+            "ring": false,
+            "content": {
+                "label": "ASTRAMORA / 01",
+                "title": "UNE PRÉSENCE SINGULIÈRE",
+                "desc": "Nous appelons ORA les personnalités qui suivent leur propre trajectoire. Une création commence par une présence, une émotion, un mouvement. Les figures de recherche ASTRAMORA sont originales ; aucune célébrité ni collaboration signée n’est revendiquée.",
+                "cta": "Découvrir la maison ↗",
+                "href": "/astramora/#maison",
+                "items": [
+                    {
+                        "tag": "Vision",
+                        "name": "PARAÎTRE. ET ÊTRE.",
+                        "sub": "Une silhouette qui prolonge une personnalité.",
+                        "href": "/astramora/#maison"
+                    },
+                    {
+                        "tag": "Parcours",
+                        "name": "VOTRE TRAJECTOIRE",
+                        "sub": "Choisir une présence et une intention.",
+                        "href": "/astramora/atelier.html"
+                    }
+                ]
+            }
+        },
+        {
+            "label": "PIÈCES UNIQUES",
+            "sub": "scène · cinéma · apparition",
+            "size": 0.015,
+            "speed": 0.0041,
+            "angle": 1.53,
+            "ring": false,
+            "content": {
+                "label": "ASTRAMORA / 02",
+                "title": "HABILLER UN MOMENT",
+                "desc": "Une tenue pour un artiste en tournée, une apparition à l’écran ou un événement singulier. La pièce se pense avec son usage : mouvement, lumière, silhouette et détails personnels. Chaque projet reste à développer avec un couturier.",
+                "cta": "Explorer les créations ↗",
+                "href": "/astramora/#pieces",
+                "items": [
+                    {
+                        "tag": "Expression",
+                        "name": "SCÈNE & MOUVEMENT",
+                        "sub": "Une intention à éprouver pendant les essayages.",
+                        "href": "/astramora/atelier.html"
+                    },
+                    {
+                        "tag": "Signature",
+                        "name": "ACCESSOIRES UNIQUES",
+                        "sub": "Ceintures, manchettes ou sac orbital à explorer.",
+                        "href": "/astramora/atelier.html"
+                    }
+                ]
+            }
+        },
+        {
+            "label": "MATIÈRES",
+            "sub": "cuir · daim · fibres naturelles",
+            "size": 0.016,
+            "speed": 0.0044,
+            "angle": 2.56,
+            "ring": false,
+            "content": {
+                "label": "ASTRAMORA / 03",
+                "title": "LA MATIÈRE DONNE LE TON",
+                "desc": "Cuir véritable et daim animal, coton, soie et laine souhaités en composition 100 %. Le configurateur montre des textures indicatives et des références documentaires. La composition, le toucher, la couleur et le tombé de la pièce finale demandent des échantillons validés.",
+                "cta": "Explorer les matières ↗",
+                "href": "/astramora/atelier.html",
+                "items": [
+                    {
+                        "tag": "Matières animales",
+                        "name": "CUIR & DAIM",
+                        "sub": "Références documentées, choix à confirmer sur échantillon.",
+                        "href": "/astramora/atelier.html"
+                    },
+                    {
+                        "tag": "Fibres naturelles",
+                        "name": "COTON · SOIE · LAINE",
+                        "sub": "Composition souhaitée 100 %, sans promesse de stock.",
+                        "href": "/astramora/atelier.html"
+                    }
+                ]
+            }
+        },
+        {
+            "label": "ARMURES DE MODE",
+            "sub": "souplesse · structure · métal",
+            "size": 0.017,
+            "speed": 0.0047,
+            "angle": 3.59,
+            "ring": true,
+            "content": {
+                "label": "ASTRAMORA / 04",
+                "title": "UNE FORCE À PORTER",
+                "desc": "Des épaules sculpturales, une pièce sur le buste, des volumes souples ou structurés et des détails à aspect métallique. Éclipse, Halo et Orbite donnent une direction à la silhouette. Cette recherche de mode n’est pas un équipement de protection ou une combinaison spatiale.",
+                "cta": "Composer une armure ↗",
+                "href": "/astramora/atelier.html",
+                "items": [
+                    {
+                        "tag": "Éclipse",
+                        "name": "ARCHITECTURE",
+                        "sub": "Épaules et pièce de buste dans les zones proposées.",
+                        "href": "/astramora/atelier.html"
+                    },
+                    {
+                        "tag": "Halo / Orbite",
+                        "name": "MOUVEMENT & SIGNATURE",
+                        "sub": "Volumes et accessoires dans une esthétique astrale.",
+                        "href": "/astramora/#pieces"
+                    }
+                ]
+            }
+        },
+        {
+            "label": "ATELIER ORA",
+            "sub": "3D · détails · compagnon local",
+            "size": 0.018000000000000002,
+            "speed": 0.005,
+            "angle": 4.62,
+            "ring": false,
+            "content": {
+                "label": "ASTRAMORA / 05",
+                "title": "DE L’IDÉE À LA SILHOUETTE",
+                "desc": "Partez d’un mannequin, explorez les coupes, les manches, les poches, les matières et les couleurs. ORA vous aide à formuler une proposition et attend votre confirmation avant de changer la silhouette. Le plan annoté et le dossier conservent les choix pour un futur dialogue avec l’atelier.",
+                "cta": "Entrer dans l’atelier 3D ↗",
+                "href": "/astramora/atelier.html",
+                "items": [
+                    {
+                        "tag": "Créer",
+                        "name": "COMPOSER & AJUSTER",
+                        "sub": "Un rendu 3D indicatif, modifiable étape par étape.",
+                        "href": "/astramora/atelier.html"
+                    },
+                    {
+                        "tag": "Conserver",
+                        "name": "PLAN & DOSSIER",
+                        "sub": "Exporter l’intention ; aucun patron de fabrication validé.",
+                        "href": "/astramora/atelier.html"
+                    }
+                ]
+            }
+        },
+        {
+            "label": "COLLABORATIONS",
+            "sub": "artistes · ateliers · maisons",
+            "size": 0.019,
+            "speed": 0.0053,
+            "angle": 5.65,
+            "ring": false,
+            "content": {
+                "label": "ASTRAMORA / 06",
+                "title": "DES RENCONTRES À CONSTRUIRE",
+                "desc": "ASTRAMORA ouvre une direction de collaboration avec artistes, costumiers, artisans et maisons. L’objectif : concevoir une pièce singulière et définir ensemble son usage, ses droits et son éventuelle édition. Les partenariats, devis et commandes ne sont pas encore ouverts.",
+                "cta": "Comprendre la réalisation ↗",
+                "href": "/astramora/#atelier",
+                "items": [
+                    {
+                        "tag": "Création",
+                        "name": "ARTISTES & APPARITIONS",
+                        "sub": "Une direction de collaboration, sans partenariat annoncé.",
+                        "href": "/astramora/#atelier"
+                    },
+                    {
+                        "tag": "Réalisation",
+                        "name": "DU DOSSIER AU PROTOTYPE",
+                        "sub": "Échantillons, patronage, devis et essayages à organiser.",
+                        "href": "/astramora/#atelier"
+                    }
+                ]
+            }
+        }
     ]
-  }
+}
 };
 
 /* ═══════════════════ HOME CANVAS ═══════════════════ */
@@ -1031,6 +1188,7 @@ function initEntityView(id){
     <div class="ep-hint fi fi4">— Cliquer sur un satellite →</div>
     <a href="${cfg.href || 'mailto:maisonwrldbyrecmachine@gmail.com'}" class="ep-cta fi fi5">${cfg.cta}</a>
   `;
+  if(id==='astrvm'){const nav=document.createElement('nav');nav.className='ora-universe-nav';nav.setAttribute('aria-label','Explorer l’univers ASTRAMORA');cfg.satellites.forEach(sat=>{const b=document.createElement('button');b.type='button';b.textContent=sat.label;b.onclick=()=>openSidePanel({...sat,panelColor:cfg.panelColor});nav.append(b)});panel.append(nav);const a=document.createElement('a');a.href='/astramora/';a.className='ora-house-link';a.textContent='Découvrir la maison ASTRAMORA ↗';panel.append(a);}
   panel.querySelector('.ep-cta').addEventListener('mouseenter',()=>setCur(true));
   panel.querySelector('.ep-cta').addEventListener('mouseleave',()=>setCur(false));
 
@@ -1047,9 +1205,9 @@ function initEntityView(id){
     const base=Math.min(W,H);
     const isMobile = W < 768;
 const panW = isMobile ? 0 : Math.min(420,W*.4);
-const ecx = isMobile ? W * .72 : panW+(W-panW)*.52;
+const ecx = isMobile ? W * .72 : panW+(W-panW)*(id==='astrvm'?.45:.52);
 const ecy = isMobile ? H * .55 : H*.5;
-    const step=base*.082;
+    const step=base*(id==='astrvm'?.052:.082);
 
     bodies=cfg.satellites.map((s,i)=>({
       ...s,
@@ -1181,5 +1339,12 @@ document.querySelectorAll('.n-logo,.n-btn,#sp-close').forEach(el=>{
   el.addEventListener('mouseleave',()=>setCur(false));
 });
 </script>
-<a class="astramora-direct" href="/astramora/">ASTRAMORA · Découvrir la maison ↗</a><style>.astramora-direct{position:fixed;z-index:25;right:24px;bottom:20px;color:#ddc891;background:#10100de8;border:1px solid #72613a;padding:12px 16px;font:11px monospace;letter-spacing:1px;text-decoration:none;cursor:pointer}@media(max-width:600px){.astramora-direct{right:12px;bottom:12px;font-size:10px}}</style></body>
+<a class="astramora-direct" id="astramora-entry" href="#astramora">ASTRAMORA · Explorer l’univers ↗</a><style>.astramora-direct{position:fixed;z-index:25;right:24px;bottom:20px;color:#ddc891;background:#10100de8;border:1px solid #72613a;padding:12px 16px;font:11px monospace;letter-spacing:1px;text-decoration:none;cursor:pointer}@media(max-width:600px){.astramora-direct{right:12px;bottom:12px;font-size:10px}}</style><style>
+#panel-astrvm{pointer-events:auto;overflow-y:auto;justify-content:flex-start;top:78px;bottom:34px;padding:28px 34px;background:linear-gradient(90deg,#080807ed,#08080795,transparent);scrollbar-width:thin;scrollbar-color:#605332 transparent}#panel-astrvm .ep-num{font-size:8px;letter-spacing:2px;color:#b6a57b;margin-bottom:18px}#panel-astrvm .ep-name{font-size:80px}#panel-astrvm .ep-tagline{font-size:25px;color:#e0cfaa;margin-bottom:16px}#panel-astrvm .ep-body{font-size:13px;color:#bcb9b0;line-height:1.8;margin-bottom:20px}#panel-astrvm .ep-hint{display:none}#panel-astrvm .ep-cta{display:block;text-align:center;letter-spacing:1.5px;cursor:pointer;padding:14px 8px}.ora-universe-nav{position:static;inset:auto;z-index:auto;width:auto;padding:0;pointer-events:auto;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}.ora-universe-nav button{font:9px var(--fm);letter-spacing:1px;color:#d9c99d;border:1px solid #6d5b3670;background:#17150f99;padding:11px 5px;cursor:pointer;text-align:left}.ora-universe-nav button:hover,.ora-universe-nav button:focus-visible{background:#40351c;outline:1px solid #ccb77f}.ora-house-link{font:10px var(--fm);color:#bfb495;line-height:1.6;margin-top:18px;text-decoration:none;cursor:pointer}.sp-item[href]{display:block;text-decoration:none;color:inherit;cursor:pointer}.sp-item[href]:focus-visible{outline:1px solid #c8a84b}.sp-desc{color:#c0bab0}.sp-item-sub{color:#9d988f}
+@media(max-width:768px){#panel-astrvm{top:85px;bottom:62px;width:min(100%,400px);padding:20px 24px;background:linear-gradient(90deg,#080807f5,#080807dd,transparent)}#panel-astrvm .ep-name{font-size:56px}#panel-astrvm .ep-tagline{font-size:23px}#panel-astrvm .ep-body{max-width:310px;font-size:13px;line-height:1.7}#panel-astrvm .ep-num{display:flex}#panel-astrvm .ep-cta{display:block}.ora-universe-nav button{font-size:9px;padding:12px 8px}}
+</style><script>
+document.getElementById('astramora-entry').onclick=e=>{e.preventDefault();showView('astrvm')};
+if(location.hash==='#astramora')showView('astrvm');
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSidePanel()});
+</script></body>
 </html>
