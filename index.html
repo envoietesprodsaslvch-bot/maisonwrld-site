@@ -830,11 +830,12 @@ const CONFIGS = {
   },
   astrvm: {
     canvasId:'c-astrvm', panelId:'panel-astrvm',
-    num:'Structure 03 · Lifestyle · DA · Merch',
+    num:'Structure 03 · Maison de pièces uniques',
     name:'ASTRA\nMORA', nameColor:'#c8a84b',
-    tagline:'Direction artistique. Collections. La lumière dans le monde réel.',
-    body:'Création vestimentaire pour live, clip, cinéma. Collections spéciales, éditions limitées, pièces valorisées. Collaboration entre marques. SKAN — pièces vestimentaires digitales.',
-    cta:'Collaborer',
+    tagline:'Paraître. Et être. Une présence unique, une silhouette à inventer.',
+    body:'Maison de créations vestimentaires et accessoires uniques. Scène, cinéma, personnalités ORA et collaborations à construire. Explorez les coupes, matières et armures de mode dans notre atelier 3D ; chaque réalisation reste soumise à une validation artisanale.',
+    cta:'Entrer dans l’atelier',
+    href:'/astramora/atelier.html',
     coreColor:'rgba(200,168,75,A)',
     panelColor:'rgb(200,168,75)',
     nebulaRgb:'62,42,6',
@@ -844,23 +845,23 @@ const CONFIGS = {
       {label:'DIR. ARTISTIQUE',  sub:'vision · stratégie · design',     size:.018, speed:.0052, angle:.9,   ring:false,
        content:{label:'ASTRAMORA',title:'DIRECTION ARTISTIQUE',cta:'Collaborer',
         desc:'Direction artistique pour l\'écosystème et les marques partenaires. Histoire de marque, vision, design original — construire un univers qui dure.',
-        items:[{tag:'DA',name:'PROJET 001',sub:'Bientôt disponible'},{tag:'Branding',name:'PROJET 002',sub:'Bientôt disponible'}]}},
-      {label:'VÊTEMENTS',        sub:'live · clip · cinéma · concert',  size:.020, speed:.0038, angle:2.4,  ring:false,
-       content:{label:'ASTRAMORA',title:'VÊTEMENTS',cta:'Collaborer',
+        items:[{tag:'Création',name:'ATELIER ORA',sub:'Étude 3D personnalisable'},{tag:'Maison',name:'ASTRAMORA',sub:'Pièces uniques · univers astral'}]}},
+      {label:'PIÈCES UNIQUES',        sub:'live · clip · cinéma · concert',  size:.020, speed:.0038, angle:2.4,  ring:false,
+       content:{label:'ASTRAMORA',title:'PIÈCES UNIQUES',cta:'Collaborer',
         desc:'Création vestimentaire pour les univers live, clip, cinéma et concert. Pièces conçues pour être vues en mouvement, portées avec intention.',
-        items:[{tag:'Live',name:'PROJET 001',sub:'Bientôt disponible'},{tag:'Clip',name:'PROJET 002',sub:'Bientôt disponible'},{tag:'Cinéma',name:'PROJET 003',sub:'Bientôt disponible'}]}},
+        items:[{tag:'Création',name:'ATELIER ORA',sub:'Étude 3D personnalisable'},{tag:'Maison',name:'ASTRAMORA',sub:'Pièces uniques · univers astral'}]}},
       {label:'COLLAB. MARQUES',  sub:'histoire · design · éditions',    size:.015, speed:.0045, angle:4.0,  ring:false,
        content:{label:'ASTRAMORA',title:'COLLABORATION MARQUES',cta:'Collaborer',
         desc:'Co-créations avec des marques partageant la vision. Design original, éditions spéciales, stratégie partagée sur le long terme.',
-        items:[{tag:'Collab',name:'PROJET 001',sub:'Bientôt disponible'},{tag:'Édition',name:'PROJET 002',sub:'Bientôt disponible'}]}},
-      {label:'COLLECTIONS',      sub:'éditions limitées · capsule',     size:.017, speed:.0042, angle:1.1,  ring:false,
-       content:{label:'ASTRAMORA',title:'COLLECTIONS',cta:'Collaborer',
-        desc:'Collections capsule, éditions limitées, pièces valorisées. L\'esthétique de la Maison portée dans le monde réel — chaque pièce est une déclaration.',
-        items:[{tag:'Collection',name:'DROP 001',sub:'Bientôt disponible'},{tag:'Édition',name:'DROP 002',sub:'Bientôt disponible'},{tag:'Pièce',name:'DROP 003',sub:'Bientôt disponible'}]}},
-      {label:'SKAN',             sub:'pièces vestimentaires digitales', size:.012, speed:.0065, angle:3.5,  ring:false,
-       content:{label:'ASTRAMORA',title:'SKAN',cta:'Collaborer',
-        desc:'Pièces vestimentaires digitales. Communication, localisation, détection, sensibilité, sécurité. L\'avenir du vêtement connecté.',
-        items:[{tag:'Digital',name:'PROJET 001',sub:'En développement'},{tag:'R&D',name:'PROJET 002',sub:'En développement'}]}},
+        items:[{tag:'Création',name:'ATELIER ORA',sub:'Étude 3D personnalisable'},{tag:'Maison',name:'ASTRAMORA',sub:'Pièces uniques · univers astral'}]}},
+      {label:'ARMURES DE MODE',      sub:'éditions limitées · capsule',     size:.017, speed:.0042, angle:1.1,  ring:false,
+       content:{label:'ASTRAMORA',title:'ARMURES DE MODE',cta:'Collaborer',
+        desc:'Volumes souples ou structurés, éléments à aspect métallique et lignes astrales : une exploration esthétique à développer avec un couturier. Ces créations ne sont pas des équipements de protection ni des tenues spatiales fonctionnelles.',
+        items:[{tag:'Création',name:'ATELIER ORA',sub:'Étude 3D personnalisable'},{tag:'Maison',name:'ASTRAMORA',sub:'Pièces uniques · univers astral'}]}},
+      {label:'ATELIER ORA',             sub:'3D · personnalisation · assistant local', size:.012, speed:.0065, angle:3.5,  ring:false,
+       content:{label:'ASTRAMORA',title:'ATELIER ORA',cta:'Collaborer',
+        desc:'Composez une étude 3D avec les options proposées et le guide ORA local. Explorez coupe, matière, couleur et détails. Le rendu est indicatif : aucun patron, prix ni délai de fabrication n’est validé automatiquement.',
+        items:[{tag:'Création',name:'ATELIER ORA',sub:'Étude 3D personnalisable'},{tag:'Maison',name:'ASTRAMORA',sub:'Pièces uniques · univers astral'}]}},
     ]
   }
 };
@@ -874,7 +875,7 @@ const CONFIGS = {
   const PLANETS=[
     {id:'rec',   label:'RECMACHINE', sub:'PRODUCTION · SAS',     rgba:'rgba(226,202,144,A)', orbitR:0,size:0,angle:.4,  speed:.0028,ring:false},
     {id:'oana',  label:'OANA',       sub:'CULTURE · ASSO',        rgba:'rgba(138,188,218,A)', orbitR:0,size:0,angle:2.2, speed:.0018,ring:false},
-    {id:'astrvm',label:'ASTRAMORA',  sub:'LIFESTYLE · DA · MERCH',rgba:'rgba(200,168,75,A)',  orbitR:0,size:0,angle:4.5, speed:.0013,ring:true }
+    {id:'astrvm',label:'ASTRAMORA',  sub:'PIÈCES UNIQUES · ATELIER ORA',rgba:'rgba(200,168,75,A)',  orbitR:0,size:0,angle:4.5, speed:.0013,ring:true }
   ];
 
   let CX,CY;
@@ -1028,7 +1029,7 @@ function initEntityView(id){
     <div class="ep-tagline fi fi2">${cfg.tagline}</div>
     <div class="ep-body fi fi3">${cfg.body}</div>
     <div class="ep-hint fi fi4">— Cliquer sur un satellite →</div>
-    <a href="mailto:maisonwrldbyrecmachine@gmail.com" class="ep-cta fi fi5">${cfg.cta}</a>
+    <a href="${cfg.href || 'mailto:maisonwrldbyrecmachine@gmail.com'}" class="ep-cta fi fi5">${cfg.cta}</a>
   `;
   panel.querySelector('.ep-cta').addEventListener('mouseenter',()=>setCur(true));
   panel.querySelector('.ep-cta').addEventListener('mouseleave',()=>setCur(false));
@@ -1180,5 +1181,5 @@ document.querySelectorAll('.n-logo,.n-btn,#sp-close').forEach(el=>{
   el.addEventListener('mouseleave',()=>setCur(false));
 });
 </script>
-</body>
+<a class="astramora-direct" href="/astramora/">ASTRAMORA · Découvrir la maison ↗</a><style>.astramora-direct{position:fixed;z-index:25;right:24px;bottom:20px;color:#ddc891;background:#10100de8;border:1px solid #72613a;padding:12px 16px;font:11px monospace;letter-spacing:1px;text-decoration:none;cursor:pointer}@media(max-width:600px){.astramora-direct{right:12px;bottom:12px;font-size:10px}}</style></body>
 </html>
