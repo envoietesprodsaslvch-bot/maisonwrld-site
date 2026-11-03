@@ -23,3 +23,5 @@ for(const [path,content]of Object.entries(rec.assets)){
 }
 for(const name of ['si-tu-maimes','24x','performance','spacelab'])await copyFile('rec-'+name+'.mp4',resolve(output,'recmachine/assets/'+name+'.mp4'));
 console.log('RECMACHINE : catalogue, images et vidéos archivées préparés.');
+
+await copyFile("recmachine-monitor.zip",resolve(output,"recmachine/assets/recmachine-monitor.zip"));
