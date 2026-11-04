@@ -627,6 +627,7 @@ function flash(cb) {
 }
 
 function showView(id, entityColor) {
+  if(id==='oana'){location.assign('/oana/');return;}
   flash(()=>{
     document.querySelectorAll('.view').forEach(v=>v.classList.remove('show'));
     document.getElementById('view-'+id).classList.add('show');

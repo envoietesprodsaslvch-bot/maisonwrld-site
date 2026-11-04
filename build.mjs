@@ -25,3 +25,12 @@ for(const name of ['si-tu-maimes','24x','performance','spacelab'])await copyFile
 console.log('RECMACHINE : catalogue, images et vidéos archivées préparés.');
 
 await copyFile("recmachine-monitor.zip",resolve(output,"recmachine/assets/recmachine-monitor.zip"));
+
+// OANA: public civic environment, without fabricated projects or votes.
+const oana=JSON.parse(await readFile('oana-source.json','utf8'));
+for(const [path,content] of Object.entries(oana)){
+ if(!path.startsWith('oana/')||path.split('/').some(x=>x==='..'||x==='.')||typeof content!=='string')throw Error('Invalid OANA path');
+ const target=resolve(output,path);if(!target.startsWith(output+'/'))throw Error('Invalid OANA target');
+ await mkdir(dirname(target),{recursive:true});await writeFile(target,content);
+}
+console.log('OANA : institution virtuelle et parcours de participation préparés.');
